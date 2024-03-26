@@ -50,7 +50,7 @@ camera.lookAt(mesh.position)
 const ambientLight = new THREE.AmbientLight("#ffffff", 10);
 scene.add(ambientLight);
 
-gltf.load(roomUpsize, (gltf) => {
+gltf.load(room, (gltf) => {
   scene.add(gltf.scene)
 })
 
