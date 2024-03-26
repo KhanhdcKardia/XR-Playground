@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 
 const sizes = {
   width: innerWidth,
@@ -7,6 +9,13 @@ const sizes = {
 }
 
 const canvas = document.getElementById("webgl");
+const coitho = "https://storage.googleapis.com/assets-fygito/images/CoVatHue/CoiThoBangBac.glb"
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath("/draco/");
+
+const gltf = new GLTFLoader();
+gltf.setDRACOLoader(dracoLoader);
 
 const scene = new THREE.Scene();
 
@@ -27,7 +36,14 @@ camera.lookAt(mesh.position)
 
 // mesh.rotation.set(1, 2, 3);
 
-scene.add(mesh);
+// scene.add(mesh);
+
+const ambientLight = new THREE.AmbientLight("#ffffff", 10);
+scene.add(ambientLight);
+
+gltf.load(coitho, (gltf) => {
+  scene.add(gltf.scene)
+})
 
 const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(sizes.width, sizes.height);
