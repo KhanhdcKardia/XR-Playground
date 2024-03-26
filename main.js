@@ -1,24 +1,40 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import * as THREE from 'three';
+import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+const sizes = {
+  width: 800,
+  height: 600,
+}
 
-setupCounter(document.querySelector('#counter'))
+const canvas = document.getElementById("webgl");
+
+const scene = new THREE.Scene();
+
+const axesHelper = new THREE.AxesHelper( 5 );
+scene.add( axesHelper );
+
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
+camera.position.x = 0;
+camera.position.z = 2;
+scene.add(camera);
+
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const mesh = new THREE.Mesh(geometry, material);
+
+mesh.rotation.set(1, 2, 3);
+
+scene.add(mesh);
+
+const renderer = new THREE.WebGLRenderer({ canvas });
+renderer.setSize(sizes.width, sizes.height);
+renderer.xr.enabled = true;
+
+document.body.appendChild(VRButton.createButton(renderer));
+
+// pixel ratio = 2 => per CSS pixel will be renderd by 2x2 (4pixel) on physical display device
+// renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+renderer.setAnimationLoop(() => {
+  renderer.render(scene, camera);
+})
