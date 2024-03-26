@@ -62,57 +62,82 @@ document.body.appendChild(VRButton.createButton(renderer));
 const orbitControler = new OrbitControls(camera, renderer.domElement);
 orbitControler.update();
 
-controller1 = renderer.xr.getController( 0 );
-scene.add( controller1 );
+controller1 = renderer.xr.getController(0);
+scene.add(controller1);
 
-controller2 = renderer.xr.getController( 1 );
-scene.add( controller2 );
+let rayConfigured = false,
+  handConfigured = false,
+  handPointer1 = null,
+  line = null;
 
 const controllerModelFactory = new XRControllerModelFactory();
-const handModelFactory = new XRHandModelFactory();
 
-// Hand 1
-controllerGrip1 = renderer.xr.getControllerGrip( 0 );
-controllerGrip1.add( controllerModelFactory.createControllerModel( controllerGrip1 ) );
-scene.add( controllerGrip1 );
+controllerGrip1 = renderer.xr.getControllerGrip(0);
+controllerGrip1.add(
+  controllerModelFactory.createControllerModel(controllerGrip1)
+);
+scene.add(controllerGrip1);
 
-hand1 = renderer.xr.getHand( 0 );
-hand1.add( handModelFactory.createHandModel( hand1 ) );
+controller1.addEventListener("connected", function (event) {
+  const hasHand = event.data.hand;
 
-scene.add( hand1 );
+  if (!rayConfigured) {
+    rayConfigured = true;
 
-// Hand 2
-controllerGrip2 = renderer.xr.getControllerGrip( 1 );
-controllerGrip2.add( controllerModelFactory.createControllerModel( controllerGrip2 ) );
-scene.add( controllerGrip2 );
+    const geometry = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 0, -1),
+    ]);
 
-hand2 = renderer.xr.getHand( 1 );
-hand2.add( handModelFactory.createHandModel( hand2 ) );
-scene.add( hand2 );
+    line = new THREE.Line(geometry);
+    line.name = "line";
+    line.scale.z = 5;
 
-const geometryHand = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
+    controller1.add(line);
+    //controller2.add( line.clone() );
+  } else if (line) {
+    line.visible = !hasHand;
+  }
 
-const line = new THREE.Line( geometryHand );
-line.name = 'line';
-line.scale.z = 5;
+  if (event.data.hand && !handConfigured) {
+    handConfigured = true;
 
-controller1.add( line.clone() );
-controller2.add( line.clone() );
+    hand1 = renderer.xr.getHand(0);
+
+    hand1.add(new OculusHandModel(hand1));
+    handPointer1 = new OculusHandPointerModel(hand1, controller1);
+    hand1.add(handPointer1);
+
+    scene.add(hand1);
+
+    hand1.addEventListener("connected", () => {
+      handPointer1.setCursor(1.5);
+      handPointer1.setAttached(false);
+    });
+
+    hand1.addEventListener("pinchstart", () => {
+      const intersections = [orangeButton].filter((object) => {
+        const intersections1 = handPointer1.intersectObject(object, false);
+        return intersections1 && intersections1.length;
+      });
+
+      console.log("INTERSECT ", intersections);
+    });
+    hand1.addEventListener("pinchend", () => {});
+  }
+});
 
 // pixel ratio = 2 => per CSS pixel will be renderd by 2x2 (4pixel) on physical display device
 // renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 
 function animate() {
-
   renderer.setAnimationLoop( render );
 
 }
 
 function render() {
-
   renderer.render( scene, camera );
-
 }
 
 animate();
