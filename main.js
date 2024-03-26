@@ -92,7 +92,7 @@ scene.add( hand2 );
 
 const geometryHand = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
 
-const line = new THREE.Line( geometry );
+const line = new THREE.Line( geometryHand );
 line.name = 'line';
 line.scale.z = 5;
 
@@ -102,6 +102,17 @@ controller2.add( line.clone() );
 // pixel ratio = 2 => per CSS pixel will be renderd by 2x2 (4pixel) on physical display device
 // renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-renderer.setAnimationLoop(() => {
-  renderer.render(scene, camera);
-})
+
+function animate() {
+
+  renderer.setAnimationLoop( render );
+
+}
+
+function render() {
+
+  renderer.render( scene, camera );
+
+}
+
+animate();
