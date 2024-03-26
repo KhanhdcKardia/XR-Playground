@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 
 const sizes = {
@@ -10,6 +11,7 @@ const sizes = {
 
 const canvas = document.getElementById("webgl");
 const coitho = "https://storage.googleapis.com/assets-fygito/images/CoVatHue/CoiThoBangBac.glb"
+const room = "https://storage.googleapis.com/assets-fygito/gallery-verse/hue-v6.2.glb"
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("/draco/");
@@ -41,7 +43,7 @@ camera.lookAt(mesh.position)
 const ambientLight = new THREE.AmbientLight("#ffffff", 10);
 scene.add(ambientLight);
 
-gltf.load(coitho, (gltf) => {
+gltf.load(room, (gltf) => {
   scene.add(gltf.scene)
 })
 
@@ -50,6 +52,9 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.xr.enabled = true;
 
 document.body.appendChild(VRButton.createButton(renderer));
+
+const orbitControler = new OrbitControls(camera, renderer.domElement);
+orbitControler.update();
 
 // pixel ratio = 2 => per CSS pixel will be renderd by 2x2 (4pixel) on physical display device
 // renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
