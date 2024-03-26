@@ -18,7 +18,7 @@ let controllerGrip1, controllerGrip2;
 const canvas = document.getElementById("webgl");
 const coitho = "https://storage.googleapis.com/assets-fygito/images/CoVatHue/CoiThoBangBac.glb"
 const room = "https://storage.googleapis.com/assets-fygito/gallery-verse/hue-v6.2.glb"
-const roomUpsize = "https://storage.googleapis.com/assets-fygito/gallery-verse/hue-upsize.glb"
+const roomUpsize = "https://storage.googleapis.com/assets-fygito/gallery-verse/hue-upsize_200MB.glb"
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("/draco/");
