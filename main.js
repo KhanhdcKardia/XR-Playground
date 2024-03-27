@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
+import { XRButton } from 'three/examples/jsm/webxr/XRButton';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 import { XRHandModelFactory } from 'three/examples/jsm/webxr/XRHandModelFactory.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -51,7 +52,6 @@ const ambientLight = new THREE.AmbientLight("#ffffff", 10);
 scene.add(ambientLight);
 
 gltf.load(room, (gltf) => {
-  console.log('gltf.scene: ', gltf.scene);
   scene.add(gltf.scene)
 })
 
@@ -60,78 +60,53 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.xr.enabled = true;
 
-document.body.appendChild(VRButton.createButton(renderer));
+document.body.appendChild(XRButton.createButton(renderer, {
+  requiredFeatures: [ 'hand-tracking' ]
+}));
 
 // const orbitControler = new OrbitControls(camera, renderer.domElement);
 // orbitControler.update();
 
-const cameras = renderer.xr.getCamera().cameras
+// controllers
 
-controller1 = renderer.xr.getController(0);
-console.log('controller1: ', controller1);
-scene.add(controller1);
+controller1 = renderer.xr.getController( 0 );
+scene.add( controller1 );
 
-let rayConfigured = false,
-  handConfigured = false,
-  handPointer1 = null,
-  line = null;
+controller2 = renderer.xr.getController( 1 );
+scene.add( controller2 );
 
 const controllerModelFactory = new XRControllerModelFactory();
+const handModelFactory = new XRHandModelFactory();
 
-controllerGrip1 = renderer.xr.getControllerGrip(0);
-controllerGrip1.add(
-  controllerModelFactory.createControllerModel(controllerGrip1)
-);
-scene.add(controllerGrip1);
+// Hand 1
+controllerGrip1 = renderer.xr.getControllerGrip( 0 );
+controllerGrip1.add( controllerModelFactory.createControllerModel( controllerGrip1 ) );
+scene.add( controllerGrip1 );
 
-controller1.addEventListener("connected", function (event) {
-  const hasHand = event.data.hand;
+hand1 = renderer.xr.getHand( 0 );
+hand1.add( handModelFactory.createHandModel( hand1 ) );
 
-  if (!rayConfigured) {
-    rayConfigured = true;
+scene.add( hand1 );
 
-    const geometry = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(0, 0, -1),
-    ]);
+// Hand 2
+controllerGrip2 = renderer.xr.getControllerGrip( 1 );
+controllerGrip2.add( controllerModelFactory.createControllerModel( controllerGrip2 ) );
+scene.add( controllerGrip2 );
 
-    line = new THREE.Line(geometry);
-    line.name = "line";
-    line.scale.z = 5;
+hand2 = renderer.xr.getHand( 1 );
+hand2.add( handModelFactory.createHandModel( hand2 ) );
+scene.add( hand2 );
 
-    controller1.add(line);
-    //controller2.add( line.clone() );
-  } else if (line) {
-    line.visible = !hasHand;
-  }
+//
 
-  if (event.data.hand && !handConfigured) {
-    handConfigured = true;
+const geometry2 = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
 
-    hand1 = renderer.xr.getHand(0);
+const line = new THREE.Line( geometry2 );
+line.name = 'line';
+line.scale.z = 5;
 
-    hand1.add(new OculusHandModel(hand1));
-    handPointer1 = new OculusHandPointerModel(hand1, controller1);
-    hand1.add(handPointer1);
-
-    scene.add(hand1);
-
-    hand1.addEventListener("connected", () => {
-      handPointer1.setCursor(1.5);
-      handPointer1.setAttached(false);
-    });
-
-    hand1.addEventListener("pinchstart", () => {
-      const intersections = [orangeButton].filter((object) => {
-        const intersections1 = handPointer1.intersectObject(object, false);
-        return intersections1 && intersections1.length;
-      });
-
-      console.log("INTERSECT ", intersections);
-    });
-    hand1.addEventListener("pinchend", () => {});
-  }
-});
+controller1.add( line.clone() );
+controller2.add( line.clone() );
 
 function animate() {
   renderer.setAnimationLoop( render );
@@ -139,26 +114,6 @@ function animate() {
 }
 
 function render() {
-  const foo = scene.getObjectByName("NgaiCuaHoangDe");
-  if (cameras.length > 0 && foo) {
-    // cameras[0].fov = 80; // default set to 80
-    // cameras[1].fov = 80; // default set to 80
-    // cameras[0].aspect = 0.88; // default set to .88
-    // cameras[1].aspect = 0.88; // default set to .88
-    
-    // if (cameras[0].zoom <= 2 && cameras[1].zoom <= 2) {
-    //   cameras[0].zoom += 0.001; // camera zoom is been modified using controller gamepad
-    //   cameras[1].zoom += 0.001; // camera zoom is been modified using controller gamepad
-    // }
-    cameras[0].position.set(3, 1, -10);
-    cameras[1].position.set(3, 1, -10);
-    cameras[0].lookAt(foo.position);
-    cameras[1].lookAt(foo.position);
-    cameras[0].updateProjectionMatrix();
-    cameras[1].updateProjectionMatrix();
-    cameras[0].updateMatrixWorld();
-    cameras[1].updateMatrixWorld();
-  }
   renderer.render( scene, camera );
 }
 
