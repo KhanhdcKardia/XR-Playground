@@ -64,6 +64,8 @@ document.body.appendChild(VRButton.createButton(renderer));
 const orbitControler = new OrbitControls(camera, renderer.domElement);
 orbitControler.update();
 
+const cameras = renderer.xr.getCamera().cameras
+
 controller1 = renderer.xr.getController(0);
 scene.add(controller1);
 
@@ -129,16 +131,22 @@ controller1.addEventListener("connected", function (event) {
   }
 });
 
-// pixel ratio = 2 => per CSS pixel will be renderd by 2x2 (4pixel) on physical display device
-// renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-
 function animate() {
   renderer.setAnimationLoop( render );
 
 }
 
 function render() {
+  if (cameras.length > 0) {
+    cameras[0].fov = 80; // default set to 80
+    cameras[1].fov = 80; // default set to 80
+    cameras[0].aspect = 0.88; // default set to .88
+    cameras[1].aspect = 0.88; // default set to .88
+    cameras[0].zoom = 5; // camera zoom is been modified using controller gamepad
+    cameras[1].zoom = 5; // camera zoom is been modified using controller gamepad
+    cameras[0].updateProjectionMatrix();
+    cameras[1].updateProjectionMatrix();
+  }
   renderer.render( scene, camera );
 }
 
