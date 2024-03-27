@@ -51,6 +51,7 @@ const ambientLight = new THREE.AmbientLight("#ffffff", 10);
 scene.add(ambientLight);
 
 gltf.load(room, (gltf) => {
+  console.log('gltf.scene: ', gltf.scene);
   scene.add(gltf.scene)
 })
 
@@ -61,8 +62,8 @@ renderer.xr.enabled = true;
 
 document.body.appendChild(VRButton.createButton(renderer));
 
-const orbitControler = new OrbitControls(camera, renderer.domElement);
-orbitControler.update();
+// const orbitControler = new OrbitControls(camera, renderer.domElement);
+// orbitControler.update();
 
 const cameras = renderer.xr.getCamera().cameras
 
@@ -138,21 +139,25 @@ function animate() {
 }
 
 function render() {
-  const foo = scene.getObjectByName("BucPhuDieu");
-  console.log('foo: ', foo);
+  const foo = scene.getObjectByName("NgaiCuaHoangDe");
   if (cameras.length > 0 && foo) {
     // cameras[0].fov = 80; // default set to 80
     // cameras[1].fov = 80; // default set to 80
     // cameras[0].aspect = 0.88; // default set to .88
     // cameras[1].aspect = 0.88; // default set to .88
+    
+    // if (cameras[0].zoom <= 2 && cameras[1].zoom <= 2) {
+    //   cameras[0].zoom += 0.001; // camera zoom is been modified using controller gamepad
+    //   cameras[1].zoom += 0.001; // camera zoom is been modified using controller gamepad
+    // }
+    cameras[0].position.set(3, 1, -10);
+    cameras[1].position.set(3, 1, -10);
     cameras[0].lookAt(foo.position);
     cameras[1].lookAt(foo.position);
-    if (cameras[0].zoom <= 2 && cameras[1].zoom <= 2) {
-      cameras[0].zoom += 0.001; // camera zoom is been modified using controller gamepad
-      cameras[1].zoom += 0.001; // camera zoom is been modified using controller gamepad
-    }
     cameras[0].updateProjectionMatrix();
     cameras[1].updateProjectionMatrix();
+    cameras[0].updateMatrixWorld();
+    cameras[1].updateMatrixWorld();
   }
   renderer.render( scene, camera );
 }
