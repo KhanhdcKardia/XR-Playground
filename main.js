@@ -67,6 +67,7 @@ orbitControler.update();
 const cameras = renderer.xr.getCamera().cameras
 
 controller1 = renderer.xr.getController(0);
+console.log('controller1: ', controller1);
 scene.add(controller1);
 
 let rayConfigured = false,
@@ -137,13 +138,19 @@ function animate() {
 }
 
 function render() {
-  if (cameras.length > 0) {
-    cameras[0].fov = 80; // default set to 80
-    cameras[1].fov = 80; // default set to 80
-    cameras[0].aspect = 0.88; // default set to .88
-    cameras[1].aspect = 0.88; // default set to .88
-    cameras[0].zoom = 5; // camera zoom is been modified using controller gamepad
-    cameras[1].zoom = 5; // camera zoom is been modified using controller gamepad
+  const foo = scene.getObjectByName("BucPhuDieu");
+  console.log('foo: ', foo);
+  if (cameras.length > 0 && foo) {
+    // cameras[0].fov = 80; // default set to 80
+    // cameras[1].fov = 80; // default set to 80
+    // cameras[0].aspect = 0.88; // default set to .88
+    // cameras[1].aspect = 0.88; // default set to .88
+    cameras[0].lookAt(foo.position);
+    cameras[1].lookAt(foo.position);
+    if (cameras[0].zoom <= 2 && cameras[1].zoom <= 2) {
+      cameras[0].zoom += 0.001; // camera zoom is been modified using controller gamepad
+      cameras[1].zoom += 0.001; // camera zoom is been modified using controller gamepad
+    }
     cameras[0].updateProjectionMatrix();
     cameras[1].updateProjectionMatrix();
   }
