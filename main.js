@@ -54,8 +54,9 @@ gltf.load(room, (gltf) => {
   scene.add(gltf.scene)
 })
 
-const renderer = new THREE.WebGLRenderer({ canvas });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.xr.enabled = true;
 
 document.body.appendChild(VRButton.createButton(renderer));
