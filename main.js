@@ -61,7 +61,7 @@ class App {
   }
 
   initScene() {
-    const backgroundMusic = "https://storage.googleapis.com/assets-fygito/gallery-verse/AXIS1127_04_Transformation_Full.mp3";
+    const backgroundMusic = "https://storage.googleapis.com/assets-fygito/gallery-verse/hue-sound.mp3";
 
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath("/draco/");
@@ -98,7 +98,6 @@ class App {
 
         const ctx = THREE.AudioContext.getContext();
         ctx.addEventListener("statechange", async () => {
-          console.log('statechange: hello', ctx.state);
           if (ctx.state === "suspended" || ctx.state === "interrupted") {
             ctx
               .resume()
