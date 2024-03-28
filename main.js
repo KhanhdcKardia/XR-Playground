@@ -264,8 +264,6 @@ class App {
     const ngaiHoangDe = this.scene.getObjectByName("NgaiCuaHoangDe")
     if (ngaiHoangDe) {
       ngaiHoangDe.add(this.sound)
-
-      this.sound.setRefDistance(20)
     }
 
     const dt = this.clock.getDelta();
