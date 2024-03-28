@@ -102,7 +102,9 @@ class App {
   setupVR() {
     this.renderer.xr.enabled = true;
 
-    document.body.appendChild(VRButton.createButton(this.renderer));
+    document.body.appendChild(XRButton.createButton(this.renderer, {
+      requiredFeatures: ["hand-tracking"],
+    }));
 
     const self = this;
 
