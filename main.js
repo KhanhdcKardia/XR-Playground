@@ -113,7 +113,7 @@ class App {
     this.renderer.xr.enabled = true;
 
     document.body.appendChild(XRButton.createButton(this.renderer, {
-      requiredFeatures: ["hand-tracking"],
+      // requiredFeatures: ["hand-tracking"],
     }));
 
     const self = this;
@@ -150,7 +150,8 @@ class App {
     this.scene.add(this.controllerGrip);
 
     this.dolly = new THREE.Object3D();
-    this.dolly.position.z = -10;
+    this.dolly.position.z = -15;
+    this.dolly.position.y = 0.5;
     this.dolly.add(this.camera);
     this.scene.add(this.dolly);
 
@@ -158,7 +159,6 @@ class App {
     this.camera.add(this.dummyCam);
 
     const hand1 = this.renderer.xr.getHand(1);
-    hand1.position.set(this.dolly.position.clone());
     hand1.add(new OculusHandModel(hand1));
     this.scene.add(hand1);
   }
