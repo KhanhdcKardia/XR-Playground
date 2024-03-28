@@ -75,7 +75,7 @@ class App {
     this.listener = new THREE.AudioListener();
     this.camera.add(this.listener);
 
-    this.sound = new THREE.Audio(this.listener);
+    this.sound = new THREE.PositionalAudio(this.listener);
 
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(backgroundMusic, (buffer) => {
@@ -95,6 +95,21 @@ class App {
     document.getElementById("XRButton").addEventListener("click", () => {
       if (this.sound) {
         this.sound.play()
+
+        const ctx = THREE.AudioContext.getContext();
+        ctx.addEventListener("statechange", async () => {
+          console.log('statechange: hello', ctx.state);
+          if (ctx.state === "suspended" || ctx.state === "interrupted") {
+            ctx
+              .resume()
+              .then(() => {
+                console.log("AudioContext resumed");
+              })
+              .catch((err) => {
+                console.error("AudioContext couldn't be resumed", err);
+              });
+          }
+        });
       }
     })
 
