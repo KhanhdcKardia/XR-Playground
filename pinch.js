@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { VRButton } from 'three/examples/jsm/webxr/VRButton';
+import { XRButton } from 'three/examples/jsm/webxr/XRButton';
 import { BoxLineGeometry } from 'three/examples/jsm/geometries/BoxLineGeometry';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
@@ -174,7 +174,7 @@ let App = class App {
     }
     setupVR() {
         this.renderer.xr.enabled = true;
-        document.body.appendChild(VRButton.createButton(this.renderer));
+        document.body.appendChild(XRButton.createButton(this.renderer, { requiredFeatures: ["hand-tracking"] }));
     }
 } 
 
