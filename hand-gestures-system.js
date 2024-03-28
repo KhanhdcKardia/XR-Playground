@@ -61,8 +61,6 @@ class App {
   }
 
   initScene() {
-    const backgroundMusic = "https://storage.googleapis.com/assets-fygito/gallery-verse/AXIS1127_04_Transformation_Full.mp3";
-
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath("/draco/");
 
@@ -71,18 +69,6 @@ class App {
     loader.load(room, (gltf) => {
       this.scene.add(gltf.scene);
     })
-
-    this.listener = new THREE.AudioListener();
-    this.camera.add(this.listener);
-
-    this.sound = new THREE.PositionalAudio(this.listener);
-
-    const audioLoader = new THREE.AudioLoader();
-    audioLoader.load(backgroundMusic, (buffer) => {
-      this.sound.setBuffer(buffer);
-      this.sound.setLoop(true);
-      this.sound.setVolume(0.2);
-    });
   }
 
   setupVR() {
@@ -91,12 +77,6 @@ class App {
     document.body.appendChild(XRButton.createButton(this.renderer, {
       // requiredFeatures: ["hand-tracking"],
     }));
-
-    document.getElementById("XRButton").addEventListener("click", () => {
-      if (this.sound) {
-        this.sound.play()
-      }
-    })
 
     const self = this;
 
@@ -247,11 +227,6 @@ class App {
   }
 
   render() {
-    const ngaiHoangDe = this.scene.getObjectByName("NgaiCuaHoangDe")
-    if (ngaiHoangDe) {
-      ngaiHoangDe.add(this.sound)
-    }
-
     const dt = this.clock.getDelta();
     // this.stats.update();
     if (this.controller) this.handleController(this.controller, dt);
