@@ -75,7 +75,7 @@ class App {
     this.listener = new THREE.AudioListener();
     this.camera.add(this.listener);
 
-    this.sound = new THREE.PositionalAudio(this.listener);
+    this.sound = new THREE.Audio(this.listener);
 
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(backgroundMusic, (buffer) => {
