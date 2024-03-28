@@ -6,7 +6,9 @@ import { XRHandModelFactory } from 'three/examples/jsm/webxr/XRHandModelFactory.
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { OculusHandModel } from "three/examples/jsm/webxr/OculusHandModel";
 
+const room = "https://storage.googleapis.com/assets-fygito/gallery-verse/hue-v6.2.glb"
 class App {
   constructor() {
     const canvas = document.getElementById("webgl");
@@ -59,44 +61,52 @@ class App {
   }
 
   initScene() {
-    this.scene.background = new THREE.Color(0xa0a0a0);
-    this.scene.fog = new THREE.Fog(0xa0a0a0, 50, 100);
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath("/draco/");
 
-    // ground
-    const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(200, 200),
-      new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false })
-    );
-    ground.rotation.x = -Math.PI / 2;
-    this.scene.add(ground);
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+    loader.load(room, (gltf) => {
+      this.scene.add(gltf.scene);
+    })
+    // this.scene.background = new THREE.Color(0xa0a0a0);
+    // this.scene.fog = new THREE.Fog(0xa0a0a0, 50, 100);
 
-    var grid = new THREE.GridHelper(200, 40, 0x000000, 0x000000);
-    grid.material.opacity = 0.2;
-    grid.material.transparent = true;
-    this.scene.add(grid);
+    // // ground
+    // const ground = new THREE.Mesh(
+    //   new THREE.PlaneGeometry(200, 200),
+    //   new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false })
+    // );
+    // ground.rotation.x = -Math.PI / 2;
+    // this.scene.add(ground);
 
-    const geometry = new THREE.BoxGeometry(5, 5, 5);
-    const material = new THREE.MeshPhongMaterial({ color: 0xaaaa22 });
-    const edges = new THREE.EdgesGeometry(geometry);
-    const line = new THREE.LineSegments(
-      edges,
-      new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 })
-    );
+    // var grid = new THREE.GridHelper(200, 40, 0x000000, 0x000000);
+    // grid.material.opacity = 0.2;
+    // grid.material.transparent = true;
+    // this.scene.add(grid);
 
-    this.colliders = [];
+    // const geometry = new THREE.BoxGeometry(5, 5, 5);
+    // const material = new THREE.MeshPhongMaterial({ color: 0xaaaa22 });
+    // const edges = new THREE.EdgesGeometry(geometry);
+    // const line = new THREE.LineSegments(
+    //   edges,
+    //   new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 })
+    // );
 
-    for (let x = -100; x < 100; x += 10) {
-      for (let z = -100; z < 100; z += 10) {
-        if (x == 0 && z == 0) continue;
-        const box = new THREE.Mesh(geometry, material);
-        box.position.set(x, 2.5, z);
-        const edge = line.clone();
-        edge.position.copy(box.position);
-        this.scene.add(box);
-        this.scene.add(edge);
-        this.colliders.push(box);
-      }
-    }
+    // this.colliders = [];
+
+    // for (let x = -100; x < 100; x += 10) {
+    //   for (let z = -100; z < 100; z += 10) {
+    //     if (x == 0 && z == 0) continue;
+    //     const box = new THREE.Mesh(geometry, material);
+    //     box.position.set(x, 2.5, z);
+    //     const edge = line.clone();
+    //     edge.position.copy(box.position);
+    //     this.scene.add(box);
+    //     this.scene.add(edge);
+    //     this.colliders.push(box);
+    //   }
+    // }
   }
 
   setupVR() {
@@ -139,8 +149,12 @@ class App {
     );
     this.scene.add(this.controllerGrip);
 
+    const hand1 = this.renderer.xr.getHand(1);
+    hand1.add(new OculusHandModel(hand1));
+    this.scene.add(hand1);
+
     this.dolly = new THREE.Object3D();
-    this.dolly.position.z = 5;
+    this.dolly.position.z = -5;
     this.dolly.add(this.camera);
     this.scene.add(this.dolly);
 
