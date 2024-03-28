@@ -81,7 +81,7 @@ class App {
     audioLoader.load(backgroundMusic, (buffer) => {
       this.sound.setBuffer(buffer);
       this.sound.setLoop(true);
-      this.sound.setVolume(0.2);
+      this.sound.setVolume(0.05);
     });
   }
 
@@ -264,6 +264,8 @@ class App {
     const ngaiHoangDe = this.scene.getObjectByName("NgaiCuaHoangDe")
     if (ngaiHoangDe) {
       ngaiHoangDe.add(this.sound)
+
+      this.sound.setRefDistance(20)
     }
 
     const dt = this.clock.getDelta();
