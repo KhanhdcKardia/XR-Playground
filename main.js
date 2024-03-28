@@ -150,7 +150,7 @@ class App {
     this.scene.add(this.controllerGrip);
 
     this.dolly = new THREE.Object3D();
-    // this.dolly.position.z = -5;
+    this.dolly.position.z = -5;
     this.dolly.add(this.camera);
     this.scene.add(this.dolly);
 
@@ -158,6 +158,9 @@ class App {
     this.camera.add(this.dummyCam);
 
     const hand1 = this.renderer.xr.getHand(1);
+    const dummyHand = new THREE.Object3D();
+    dummyHand.add(hand1);
+    dummyHand.position.set(this.dolly.position.clone());
     hand1.add(new OculusHandModel(hand1));
     this.scene.add(hand1);
   }
