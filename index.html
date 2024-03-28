@@ -8,6 +8,13 @@
   </head>
   <body>
     <canvas id="webgl"></canvas>
-    <script type="module" src="/main.js"></script>
+    <script type="module">
+      import { App } from './main.js';
+
+      document.addEventListener("DOMContentLoaded", function(){
+          const app = new App();
+          window.app = app;
+      });
+  </script>
   </body>
 </html>
