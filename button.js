@@ -358,7 +358,7 @@ class App {
     controllerGrip2.add( controllerModelFactory.createControllerModel( controllerGrip2 ) );
     this.scene.add( controllerGrip2 );
 
-    const hand2 = this.renderer.xr.getHand( 0 );
+    const hand2 = this.renderer.xr.getHand( 1 );
     hand2.add( new OculusHandModel( hand2 ) );
     this.handPointer2 = new OculusHandPointerModel( hand2, this.controller2 );
     hand2.add( this.handPointer2 );
