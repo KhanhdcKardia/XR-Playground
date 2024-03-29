@@ -326,28 +326,14 @@ class App {
       this.userData.selectPressed = false;
     }
 
-    this.controller = this.renderer.xr.getController(0);
-    this.controller.addEventListener("selectstart", onSelectStart);
-    this.controller.addEventListener("selectend", onSelectEnd);
-    this.controller.addEventListener("connected", function (event) {
-      const mesh = self.buildController.call(self, event.data);
-      mesh.scale.z = 0;
-      this.add(mesh);
-    });
-    this.controller.addEventListener("disconnected", function () {
-      this.remove(this.children[0]);
-      self.controller = null;
-      self.controllerGrip = null;
-    });
-    this.scene.add(this.controller);
+    // controllers
+    this.controller1 = this.renderer.xr.getController( 0 );
+    this.scene.add( this.controller1 );
+
+    this.controller2 = this.renderer.xr.getController( 1 );
+    this.scene.add( this.controller2 );
 
     const controllerModelFactory = new XRControllerModelFactory();
-
-    this.controllerGrip = this.renderer.xr.getControllerGrip(0);
-    this.controllerGrip.add(
-      controllerModelFactory.createControllerModel(this.controllerGrip)
-    );
-    this.scene.add(this.controllerGrip);
 
     this.dolly = new THREE.Object3D();
     // this.dolly.position.z = -15;
@@ -358,64 +344,25 @@ class App {
     this.dummyCam = new THREE.Object3D();
     this.camera.add(this.dummyCam);
 
-    const hand1 = this.renderer.xr.getHand(1);
-    hand1.add(new OculusHandModel(hand1));
-    this.handPointer1 = new OculusHandPointerModel( hand1, this.controller );
-		hand1.add( this.handPointer1 );
+    const controllerGrip1 = this.renderer.xr.getControllerGrip( 0 );
+    controllerGrip1.add( controllerModelFactory.createControllerModel( controllerGrip1 ) );
+    this.scene.add( controllerGrip1 );
+
+    const hand1 = this.renderer.xr.getHand( 0 );
+    hand1.add( new OculusHandModel( hand1 ) );
+    this.handPointer1 = new OculusHandPointerModel( hand1, this.controller1 );
+    hand1.add( this.handPointer1 );
     this.dolly.add(hand1);
-    // this.scene.add(hand1);
 
-    // const menuGeometry = new THREE.PlaneGeometry( 0.24, 0.5 );
-    // const menuMaterial = new THREE.MeshPhongMaterial( {
-    //   opacity: 0,
-    //   transparent: true,
-    // } );
-    // const menuMesh = new THREE.Mesh( menuGeometry, menuMaterial );
-    // menuMesh.position.set( 0.4, 1, - 1 );
-    // menuMesh.rotation.y = - Math.PI / 12;
-    // this.scene.add( menuMesh );
+    const controllerGrip2 = this.renderer.xr.getControllerGrip( 1 );
+    controllerGrip2.add( controllerModelFactory.createControllerModel( controllerGrip2 ) );
+    this.scene.add( controllerGrip2 );
 
-    // const orangeButton = makeButtonMesh( 0.2, 0.1, 0.01, 0xffd3b5 );
-    // orangeButton.position.set( 0, 1, 0 );
-    // menuMesh.add( orangeButton );
-
-    // this.world
-    //   .registerComponent(Object3D)
-    //   .registerComponent(Button)
-    //   .registerComponent(Intersectable)
-    //   .registerComponent(Rotating)
-    //   .registerComponent(HandsInstructionText)
-    //   .registerComponent(OffsetFromCamera)
-    //   .registerComponent(NeedCalibration);
-
-    // this.world
-    //   .registerSystem(RotatingSystem)
-    //   .registerSystem(InstructionSystem, {
-    //     controllers: [this.controllerGrip],
-    //   })
-    //   .registerSystem(CalibrationSystem, {
-    //     renderer: this.renderer,
-    //     camera: this.camera,
-    //   })
-    //   .registerSystem(ButtonSystem)
-    //   .registerSystem(HandRaySystem, {
-    //     handPointers: [handPointer1],
-    //   });
-
-    // const menuEntity = this.world.createEntity();
-    // menuEntity.addComponent(Intersectable);
-    // menuEntity.addComponent(OffsetFromCamera, { x: 0.4, y: 0, z: -1 });
-    // menuEntity.addComponent(NeedCalibration);
-    // menuEntity.addComponent(Object3D, { object: menuMesh });
-
-    // const obEntity = this.world.createEntity();
-    // obEntity.addComponent(Intersectable);
-    // obEntity.addComponent(Object3D, { object: orangeButton });
-    // const obAction = function () {
-    //   this.pressing = true;
-    // };
-
-    // obEntity.addComponent(Button, { action: obAction });
+    const hand2 = this.renderer.xr.getHand( 0 );
+    hand2.add( new OculusHandModel( hand2 ) );
+    this.handPointer2 = new OculusHandPointerModel( hand2, this.controller2 );
+    hand2.add( this.handPointer2 );
+    this.dolly.add(hand2);
   }
 
   buildController(data) {
@@ -454,8 +401,9 @@ class App {
     }
   }
 
-  handleController(controller, dt) {
-    if (this.handPointer1.isPinched() || controller.userData.selectPressed) {
+  handleController(dt) {
+    if (!this.handPointer1 || !this.handPointer2) return;
+    if (this.handPointer1.isPinched() || this.handPointer2.isPinched()) {
       const wallLimit = 1.3;
       const speed = 1;
       let pos = this.dolly.position.clone();
@@ -529,7 +477,7 @@ class App {
 
     const dt = this.clock.getDelta();
     // this.stats.update();
-    if (this.controller) this.handleController(this.controller, dt);
+    if (this.controller1 && this.controller2) this.handleController(dt);
     this.renderer.render(this.scene, this.camera);
   }
 }
