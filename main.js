@@ -81,7 +81,7 @@ class App {
     audioLoader.load(backgroundMusic, (buffer) => {
       this.sound.setBuffer(buffer);
       this.sound.setLoop(true);
-      this.sound.setVolume(0.05);
+      this.sound.setVolume(0.2);
     });
   }
 
@@ -89,7 +89,7 @@ class App {
     this.renderer.xr.enabled = true;
 
     document.body.appendChild(XRButton.createButton(this.renderer, {
-      // requiredFeatures: ["hand-tracking"],
+      requiredFeatures: ["hand-tracking"],
     }));
 
     document.getElementById("XRButton").addEventListener("click", () => {
