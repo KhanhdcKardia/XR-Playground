@@ -292,7 +292,7 @@ class App {
 
     document.body.appendChild(
       XRButton.createButton(this.renderer, {
-        requiredFeatures: ["hand-tracking"],
+        // requiredFeatures: ["hand-tracking"],
       })
     );
 
@@ -528,7 +528,7 @@ class App {
     }
     const isPresenting = this.renderer.xr.isPresenting;
 
-    if (isPresenting && !this.sound.isPlaying()) {
+    if (isPresenting && !this.sound.isPlaying) {
       this.sound.play();
     }
     const dt = this.clock.getDelta();
