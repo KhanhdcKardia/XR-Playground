@@ -528,7 +528,7 @@ class App {
     }
     const isPresenting = this.renderer.xr.isPresenting;
 
-    if (isPresenting && !this.sound.isPlaying) {
+    if (isPresenting && this.sound && !this.sound.isPlaying) {
       this.sound.play();
     }
     const dt = this.clock.getDelta();
