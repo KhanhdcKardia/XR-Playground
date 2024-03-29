@@ -269,7 +269,7 @@ class App {
     audioLoader.load(backgroundMusic, (buffer) => {
       this.sound.setBuffer(buffer);
       this.sound.setLoop(true);
-      this.sound.setVolume(0.05);
+      this.sound.setVolume(0.3);
     });
   }
 
@@ -278,7 +278,7 @@ class App {
 
     document.body.appendChild(
       XRButton.createButton(this.renderer, {
-        // requiredFeatures: ["hand-tracking"],
+        requiredFeatures: ["hand-tracking"],
       })
     );
 
