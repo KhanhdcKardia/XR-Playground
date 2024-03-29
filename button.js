@@ -348,8 +348,8 @@ class App {
     hand1.add(new OculusHandModel(hand1));
     this.handPointer1 = new OculusHandPointerModel( hand1, this.controller );
 		hand1.add( this.handPointer1 );
-    this.dolly.add(hand1);
-    // this.scene.add(hand1);
+    // this.dolly.add(hand1);
+    this.scene.add(hand1);
 
     // const menuGeometry = new THREE.PlaneGeometry( 0.24, 0.5 );
     // const menuMaterial = new THREE.MeshPhongMaterial( {
