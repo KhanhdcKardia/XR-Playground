@@ -292,29 +292,29 @@ class App {
 
     document.body.appendChild(
       XRButton.createButton(this.renderer, {
-        // requiredFeatures: ["hand-tracking"],
+        requiredFeatures: ["hand-tracking"],
       })
     );
 
-    document.getElementById("XRButton").addEventListener("click", () => {
-      if (this.sound) {
-        this.sound.play();
+    // document.getElementById("XRButton").addEventListener("click", () => {
+    //   if (this.sound) {
+    //     this.sound.play();
 
-        const ctx = THREE.AudioContext.getContext();
-        ctx.addEventListener("statechange", async () => {
-          if (ctx.state === "suspended" || ctx.state === "interrupted") {
-            ctx
-              .resume()
-              .then(() => {
-                console.log("AudioContext resumed");
-              })
-              .catch((err) => {
-                console.error("AudioContext couldn't be resumed", err);
-              });
-          }
-        });
-      }
-    });
+    //     const ctx = THREE.AudioContext.getContext();
+    //     ctx.addEventListener("statechange", async () => {
+    //       if (ctx.state === "suspended" || ctx.state === "interrupted") {
+    //         ctx
+    //           .resume()
+    //           .then(() => {
+    //             console.log("AudioContext resumed");
+    //           })
+    //           .catch((err) => {
+    //             console.error("AudioContext couldn't be resumed", err);
+    //           });
+    //       }
+    //     });
+    //   }
+    // });
 
     const self = this;
 
@@ -526,7 +526,11 @@ class App {
     if (ngaiHoangDe) {
       ngaiHoangDe.add(this.sound);
     }
+    const isPresenting = this.renderer.xr.isPresenting;
 
+    if (isPresenting && !this.sound.isPlaying()) {
+      this.sound.play();
+    }
     const dt = this.clock.getDelta();
     // this.stats.update();
     if (this.controller) this.handleController(this.controller, dt);
