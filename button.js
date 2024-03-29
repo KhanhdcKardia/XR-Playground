@@ -337,7 +337,7 @@ class App {
 
     this.dolly = new THREE.Object3D();
     // this.dolly.position.z = -15;
-    this.dolly.position.y = 0.5;
+    // this.dolly.position.y = 0.5;
     this.dolly.add(this.camera);
     this.scene.add(this.dolly);
 
@@ -346,8 +346,8 @@ class App {
 
     const hand1 = this.renderer.xr.getHand(1);
     hand1.add(new OculusHandModel(hand1));
-    const handPointer1 = new OculusHandPointerModel( hand1, this.controller );
-		hand1.add( handPointer1 );
+    this.handPointer1 = new OculusHandPointerModel( hand1, this.controller );
+		hand1.add( this.handPointer1 );
     this.scene.add(hand1);
 
     // const menuGeometry = new THREE.PlaneGeometry( 0.24, 0.5 );
@@ -440,7 +440,7 @@ class App {
   }
 
   handleController(controller, dt) {
-    if (this.pressing) {
+    if (this.handPointer1 && this.handPointer1.isPinched()) {
       const wallLimit = 1.3;
       const speed = 2;
       let pos = this.dolly.position.clone();
