@@ -440,9 +440,9 @@ class App {
   }
 
   handleController(controller, dt) {
-    if (this.handPointer1 && this.handPointer1.isPinched()) {
+    if ((this.handPointer1 && this.handPointer1.isPinched()) || controller.userData.selectPressed) {
       const wallLimit = 1.3;
-      const speed = 2;
+      const speed = 1;
       let pos = this.dolly.position.clone();
       pos.y += 1;
 
@@ -459,7 +459,7 @@ class App {
 
       let blocked = false;
 
-      let intersect = this.raycaster.intersectObjects(this.colliders);
+      let intersect = this.raycaster.intersectObjects([]);
       if (intersect.length > 0) {
         if (intersect[0].distance < wallLimit) blocked = true;
       }
@@ -475,7 +475,7 @@ class App {
       dir.normalize();
       this.raycaster.set(pos, dir);
 
-      intersect = this.raycaster.intersectObjects(this.colliders);
+      intersect = this.raycaster.intersectObjects([]);
       if (intersect.length > 0) {
         if (intersect[0].distance < wallLimit)
           this.dolly.translateX(wallLimit - intersect[0].distance);
@@ -487,7 +487,7 @@ class App {
       dir.normalize();
       this.raycaster.set(pos, dir);
 
-      intersect = this.raycaster.intersectObjects(this.colliders);
+      intersect = this.raycaster.intersectObjects([]);
       if (intersect.length > 0) {
         if (intersect[0].distance < wallLimit)
           this.dolly.translateX(intersect[0].distance - wallLimit);
