@@ -240,6 +240,20 @@ class App {
 
     window.addEventListener("resize", this.resize.bind(this));
 
+    const ctx = THREE.AudioContext.getContext();
+    ctx.addEventListener("statechange", async () => {
+      if (ctx.state === "suspended" || ctx.state === "interrupted") {
+        ctx
+          .resume()
+          .then(() => {
+            console.log("AudioContext resumed");
+          })
+          .catch((err) => {
+            console.error("AudioContext couldn't be resumed", err);
+          });
+      }
+    });
+
     this.renderer.setAnimationLoop(this.render.bind(this));
   }
 
@@ -278,7 +292,7 @@ class App {
 
     document.body.appendChild(
       XRButton.createButton(this.renderer, {
-        requiredFeatures: ["hand-tracking"],
+        // requiredFeatures: ["hand-tracking"],
       })
     );
 
