@@ -350,57 +350,57 @@ class App {
 		hand1.add( handPointer1 );
     this.scene.add(hand1);
 
-    const menuGeometry = new THREE.PlaneGeometry( 0.24, 0.5 );
-    const menuMaterial = new THREE.MeshPhongMaterial( {
-      opacity: 0,
-      transparent: true,
-    } );
-    const menuMesh = new THREE.Mesh( menuGeometry, menuMaterial );
-    menuMesh.position.set( 0.4, 1, - 1 );
-    menuMesh.rotation.y = - Math.PI / 12;
-    this.scene.add( menuMesh );
+    // const menuGeometry = new THREE.PlaneGeometry( 0.24, 0.5 );
+    // const menuMaterial = new THREE.MeshPhongMaterial( {
+    //   opacity: 0,
+    //   transparent: true,
+    // } );
+    // const menuMesh = new THREE.Mesh( menuGeometry, menuMaterial );
+    // menuMesh.position.set( 0.4, 1, - 1 );
+    // menuMesh.rotation.y = - Math.PI / 12;
+    // this.scene.add( menuMesh );
 
-    const orangeButton = makeButtonMesh( 0.2, 0.1, 0.01, 0xffd3b5 );
-    orangeButton.position.set( 0, 1, 0 );
-    menuMesh.add( orangeButton );
+    // const orangeButton = makeButtonMesh( 0.2, 0.1, 0.01, 0xffd3b5 );
+    // orangeButton.position.set( 0, 1, 0 );
+    // menuMesh.add( orangeButton );
 
-    this.world
-      .registerComponent(Object3D)
-      .registerComponent(Button)
-      .registerComponent(Intersectable)
-      .registerComponent(Rotating)
-      .registerComponent(HandsInstructionText)
-      .registerComponent(OffsetFromCamera)
-      .registerComponent(NeedCalibration);
+    // this.world
+    //   .registerComponent(Object3D)
+    //   .registerComponent(Button)
+    //   .registerComponent(Intersectable)
+    //   .registerComponent(Rotating)
+    //   .registerComponent(HandsInstructionText)
+    //   .registerComponent(OffsetFromCamera)
+    //   .registerComponent(NeedCalibration);
 
-    this.world
-      .registerSystem(RotatingSystem)
-      .registerSystem(InstructionSystem, {
-        controllers: [this.controllerGrip],
-      })
-      .registerSystem(CalibrationSystem, {
-        renderer: this.renderer,
-        camera: this.camera,
-      })
-      .registerSystem(ButtonSystem)
-      .registerSystem(HandRaySystem, {
-        handPointers: [handPointer1],
-      });
+    // this.world
+    //   .registerSystem(RotatingSystem)
+    //   .registerSystem(InstructionSystem, {
+    //     controllers: [this.controllerGrip],
+    //   })
+    //   .registerSystem(CalibrationSystem, {
+    //     renderer: this.renderer,
+    //     camera: this.camera,
+    //   })
+    //   .registerSystem(ButtonSystem)
+    //   .registerSystem(HandRaySystem, {
+    //     handPointers: [handPointer1],
+    //   });
 
-    const menuEntity = this.world.createEntity();
-    menuEntity.addComponent(Intersectable);
-    menuEntity.addComponent(OffsetFromCamera, { x: 0.4, y: 0, z: -1 });
-    menuEntity.addComponent(NeedCalibration);
-    menuEntity.addComponent(Object3D, { object: menuMesh });
+    // const menuEntity = this.world.createEntity();
+    // menuEntity.addComponent(Intersectable);
+    // menuEntity.addComponent(OffsetFromCamera, { x: 0.4, y: 0, z: -1 });
+    // menuEntity.addComponent(NeedCalibration);
+    // menuEntity.addComponent(Object3D, { object: menuMesh });
 
-    const obEntity = this.world.createEntity();
-    obEntity.addComponent(Intersectable);
-    obEntity.addComponent(Object3D, { object: orangeButton });
-    const obAction = function () {
-      this.pressing = true;
-    };
+    // const obEntity = this.world.createEntity();
+    // obEntity.addComponent(Intersectable);
+    // obEntity.addComponent(Object3D, { object: orangeButton });
+    // const obAction = function () {
+    //   this.pressing = true;
+    // };
 
-    obEntity.addComponent(Button, { action: obAction });
+    // obEntity.addComponent(Button, { action: obAction });
   }
 
   buildController(data) {
