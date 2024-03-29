@@ -455,7 +455,7 @@ class App {
   }
 
   handleController(controller, dt) {
-    if ((this.handPointer1 && this.handPointer1.isPinched()) || controller.userData.selectPressed) {
+    if (this.handPointer1.isPinched() || controller.userData.selectPressed) {
       const wallLimit = 1.3;
       const speed = 1;
       let pos = this.dolly.position.clone();
@@ -526,11 +526,7 @@ class App {
     if (ngaiHoangDe) {
       ngaiHoangDe.add(this.sound);
     }
-    const isPresenting = this.renderer.xr.isPresenting;
 
-    if (isPresenting && this.sound && !this.sound.isPlaying) {
-      this.sound.play();
-    }
     const dt = this.clock.getDelta();
     // this.stats.update();
     if (this.controller) this.handleController(this.controller, dt);
