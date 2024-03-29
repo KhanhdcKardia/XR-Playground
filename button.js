@@ -193,7 +193,7 @@ function makeButtonMesh( x, y, z, color ) {
 
 // Hue
 const room =
-  "https://storage.googleapis.com/assets-fygito/gallery-verse/hue-v6.2.glb";
+  "/model/room.glb";
 class App {
   constructor() {
     const canvas = document.getElementById("webgl");
@@ -278,7 +278,7 @@ class App {
 
     document.body.appendChild(
       XRButton.createButton(this.renderer, {
-        requiredFeatures: ["hand-tracking"],
+        // requiredFeatures: ["hand-tracking"],
       })
     );
 
@@ -348,6 +348,7 @@ class App {
     hand1.add(new OculusHandModel(hand1));
     this.handPointer1 = new OculusHandPointerModel( hand1, this.controller );
 		hand1.add( this.handPointer1 );
+    this.dolly.add(hand1);
     this.scene.add(hand1);
 
     // const menuGeometry = new THREE.PlaneGeometry( 0.24, 0.5 );
