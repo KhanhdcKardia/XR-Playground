@@ -104,15 +104,16 @@ class App {
       environmentMap.colorSpace = THREE.SRGBColorSpace
 
       this.scene.background = environmentMap
+      this.scene.environment = environmentMap
     })
 
-    const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256, {
-      type: THREE.FloatType
-    })
-    this.scene.environment = cubeRenderTarget.texture;
+    // const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256, {
+    //   type: THREE.FloatType
+    // })
+    // this.scene.environment = cubeRenderTarget.texture;
     
-    this.cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
-    this.cubeCamera.layers.set(1)
+    // this.cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
+    // this.cubeCamera.layers.set(1)
 
     this.listener = new THREE.AudioListener();
     this.camera.add(this.listener);
@@ -318,9 +319,6 @@ class App {
     const dt = this.clock.getDelta();
     // this.stats.update();
     if (this.controller1 && this.controller2) this.handleController(dt);
-    if (this.cubeCamera) {
-      this.cubeCamera.update( this.renderer, this.scene );
-    }
     this.renderer.render(this.scene, this.camera);
   }
 
