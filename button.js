@@ -43,7 +43,7 @@ class App {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.outputEncoding = THREE.sRGBEncoding;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.target.set(0, 1.6, 0);
@@ -101,19 +101,12 @@ class App {
     exrLoader.load('https://storage.googleapis.com/assets-fygito/gallery-verse/ReflectionProbe-1.exr', (environmentMap) =>
     {
       environmentMap.mapping = THREE.EquirectangularReflectionMapping;
-      environmentMap.colorSpace = THREE.SRGBColorSpace
+      environmentMap.colorSpace = THREE.SRGBColorSpace;
+      environmentMap.anisotropy = 10;
 
-      this.scene.background = environmentMap
+      // this.scene.background = environmentMap
       this.scene.environment = environmentMap
     })
-
-    // const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256, {
-    //   type: THREE.FloatType
-    // })
-    // this.scene.environment = cubeRenderTarget.texture;
-    
-    // this.cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
-    // this.cubeCamera.layers.set(1)
 
     this.listener = new THREE.AudioListener();
     this.camera.add(this.listener);
@@ -326,6 +319,7 @@ class App {
     this.scene.traverse((child) => {
       if (child.isMesh && child.material.isMeshStandardMaterial) {
         child.material.envMapIntensity = 1;
+        child.material.map.anisotropy = 10;
       }
     });
   }
