@@ -10,186 +10,7 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { OculusHandModel } from "three/examples/jsm/webxr/OculusHandModel";
 import { createText } from 'three/examples/jsm/webxr/Text2D';
 import { World, System, Component, TagComponent, Types } from 'three/examples/jsm/libs/ecsy.module.js';
-
-class Object3D extends Component {}
-
-Object3D.schema = {
-  object: { type: Types.Ref },
-};
-
-class Button extends Component {}
-
-Button.schema = {
-  // button states: [none, hovered, pressed]
-  currState: { type: Types.String, default: "none" },
-  prevState: { type: Types.String, default: "none" },
-  action: { type: Types.Ref, default: () => {} },
-};
-
-class ButtonSystem extends System {
-  execute(/* delta, time */) {
-    this.queries.buttons.results.forEach((entity) => {
-      const button = entity.getMutableComponent(Button);
-      const buttonMesh = entity.getComponent(Object3D).object;
-      if (button.currState == "none") {
-        buttonMesh.scale.set(1, 1, 1);
-      } else {
-        buttonMesh.scale.set(1.1, 1.1, 1.1);
-      }
-
-      if (button.currState == "pressed" && button.prevState != "pressed") {
-        button.action();
-      }
-
-      // preserve prevState, clear currState
-      // HandRaySystem will update currState
-      button.prevState = button.currState;
-      button.currState = "none";
-    });
-  }
-}
-
-ButtonSystem.queries = {
-  buttons: {
-    components: [Button],
-  },
-};
-
-class Intersectable extends TagComponent {}
-
-class HandRaySystem extends System {
-  init(attributes) {
-    this.handPointers = attributes.handPointers;
-  }
-
-  execute(/* delta, time */) {
-    this.handPointers.forEach((hp) => {
-      let distance = null;
-      let intersectingEntity = null;
-      this.queries.intersectable.results.forEach((entity) => {
-        const object = entity.getComponent(Object3D).object;
-        const intersections = hp.intersectObject(object, false);
-        if (intersections && intersections.length > 0) {
-          if (distance == null || intersections[0].distance < distance) {
-            distance = intersections[0].distance;
-            intersectingEntity = entity;
-          }
-        }
-      });
-      if (distance) {
-        hp.setCursor(distance);
-        if (intersectingEntity.hasComponent(Button)) {
-          const button = intersectingEntity.getMutableComponent(Button);
-          if (hp.isPinched()) {
-            button.currState = "pressed";
-          } else if (button.currState != "pressed") {
-            button.currState = "hovered";
-          }
-        }
-      } else {
-        hp.setCursor(1.5);
-      }
-    });
-  }
-}
-
-HandRaySystem.queries = {
-  intersectable: {
-    components: [Intersectable],
-  },
-};
-
-class Rotating extends TagComponent {}
-
-class RotatingSystem extends System {
-  execute(delta /*, time*/) {
-    this.queries.rotatingObjects.results.forEach((entity) => {
-      const object = entity.getComponent(Object3D).object;
-      object.rotation.x += 0.4 * delta;
-      object.rotation.y += 0.4 * delta;
-    });
-  }
-}
-
-RotatingSystem.queries = {
-  rotatingObjects: {
-    components: [Rotating],
-  },
-};
-
-class HandsInstructionText extends TagComponent {}
-
-class InstructionSystem extends System {
-  init(attributes) {
-    this.controllers = attributes.controllers;
-  }
-
-  execute(/* delta, time */) {
-    let visible = false;
-    this.controllers.forEach((controller) => {
-      if (controller.visible) {
-        visible = true;
-      }
-    });
-
-    this.queries.instructionTexts.results.forEach((entity) => {
-      const object = entity.getComponent(Object3D).object;
-      object.visible = visible;
-    });
-  }
-}
-
-InstructionSystem.queries = {
-  instructionTexts: {
-    components: [HandsInstructionText],
-  },
-};
-
-class OffsetFromCamera extends Component {}
-
-OffsetFromCamera.schema = {
-  x: { type: Types.Number, default: 0 },
-  y: { type: Types.Number, default: 0 },
-  z: { type: Types.Number, default: 0 },
-};
-
-class NeedCalibration extends TagComponent {}
-
-class CalibrationSystem extends System {
-  init(attributes) {
-    this.camera = attributes.camera;
-    this.renderer = attributes.renderer;
-  }
-
-  execute(/* delta, time */) {
-    this.queries.needCalibration.results.forEach((entity) => {
-      if (this.renderer.xr.getSession()) {
-        const offset = entity.getComponent(OffsetFromCamera);
-        const object = entity.getComponent(Object3D).object;
-        const xrCamera = this.renderer.xr.getCamera();
-        object.position.x = xrCamera.position.x + offset.x;
-        object.position.y = xrCamera.position.y + offset.y;
-        object.position.z = xrCamera.position.z + offset.z;
-        entity.removeComponent(NeedCalibration);
-      }
-    });
-  }
-}
-
-CalibrationSystem.queries = {
-  needCalibration: {
-    components: [NeedCalibration],
-  },
-};
-
-function makeButtonMesh( x, y, z, color ) {
-  const geometry = new THREE.BoxGeometry(x, y, z);
-  const material = new THREE.MeshPhongMaterial({ color: color });
-  const buttonMesh = new THREE.Mesh(geometry, material);
-  buttonMesh.castShadow = true;
-  buttonMesh.receiveShadow = true;
-  return buttonMesh;
-}
+import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader'
 
 // Hue
 const room =
@@ -272,7 +93,26 @@ class App {
     loader.setDRACOLoader(dracoLoader);
     loader.load(room, (gltf) => {
       this.scene.add(gltf.scene);
+
+      this.updateAllMaterials();
     });
+
+    const exrLoader = new EXRLoader();
+    exrLoader.load('https://storage.googleapis.com/assets-fygito/gallery-verse/ReflectionProbe-1.exr', (environmentMap) =>
+    {
+      environmentMap.mapping = THREE.EquirectangularReflectionMapping;
+      environmentMap.colorSpace = THREE.SRGBColorSpace
+
+      this.scene.background = environmentMap
+    })
+
+    const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256, {
+      type: THREE.FloatType
+    })
+    this.scene.environment = cubeRenderTarget.texture;
+    
+    this.cubeCamera = new THREE.CubeCamera(0.1, 100, cubeRenderTarget)
+    this.cubeCamera.layers.set(1)
 
     this.listener = new THREE.AudioListener();
     this.camera.add(this.listener);
@@ -478,7 +318,18 @@ class App {
     const dt = this.clock.getDelta();
     // this.stats.update();
     if (this.controller1 && this.controller2) this.handleController(dt);
+    if (this.cubeCamera) {
+      this.cubeCamera.update( this.renderer, this.scene );
+    }
     this.renderer.render(this.scene, this.camera);
+  }
+
+  updateAllMaterials() {
+    this.scene.traverse((child) => {
+      if (child.isMesh && child.material.isMeshStandardMaterial) {
+        child.material.envMapIntensity = 1;
+      }
+    });
   }
 }
 
