@@ -290,7 +290,7 @@ class App {
           this.dolly.translateX(intersect[0].distance - wallLimit);
       }
 
-      this.dolly.position.y = 0;
+      this.dolly.position.y = 1;
 
       //Restore the original rotation
       this.dolly.quaternion.copy(quaternion);
