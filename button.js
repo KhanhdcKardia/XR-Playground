@@ -14,7 +14,7 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader'
 
 // Hue
 const room =
-  "/model/room.glb";
+  "/hue-webp-v8-4k.glb";
 class App {
   constructor() {
     const canvas = document.getElementById("webgl");
@@ -170,8 +170,8 @@ class App {
     const controllerModelFactory = new XRControllerModelFactory();
 
     this.dolly = new THREE.Object3D();
-    // this.dolly.position.z = -15;
-    // this.dolly.position.y = 0.5;
+    this.dolly.position.z = -3;
+    this.dolly.position.y = 1;
     this.dolly.add(this.camera);
     this.scene.add(this.dolly);
 
